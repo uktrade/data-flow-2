@@ -6,7 +6,8 @@ RUN \
 
 WORKDIR /app
 
-COPY setup.py pyproject.toml dagster.yaml .
-
+COPY setup.py pyproject.toml .
 RUN \
 	pip install -e ".[dev]"
+
+COPY dagster.yaml workspace.yaml .

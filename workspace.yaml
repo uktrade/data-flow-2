@@ -1,0 +1,13 @@
+load_from:
+  - python_package:
+      package_name: teams.data_science
+      location_name: Data Science
+  - python_package:
+      package_name: teams.data_science
+      location_name: Datasets & Analysis
+  - python_package:
+      package_name: teams.gscip
+      location_name: GSCIP
+  - python_package:
+      package_name: teams.lite
+      location_name: LITE

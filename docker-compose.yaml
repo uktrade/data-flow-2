@@ -11,12 +11,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: dagster dev --port 8080 --host 0.0.0.0
+    command: dagster dev --port 8080 --host 0.0.0.0 --workspace workspace.yaml
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
       DAGSTER_HOME: /app
     volumes:
-      - ${PWD}/data_flow_2:/app/data_flow_2
+      - ${PWD}/teams:/app/teams
     ports:
       - "8080:8080"
     links:
