@@ -1,0 +1,6 @@
+telemetry:
+  enabled: false
+storage:
+  postgres:
+    postgres_url:
+      env: POSTGRES_URL

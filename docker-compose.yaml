@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  data-flow-2-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+  data-flow-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: dagster dev --port 8080 --host 0.0.0.0
+    environment:
+      POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
+      DAGSTER_HOME: /app
+    volumes:
+      - ${PWD}/data_flow_2:/app/data_flow_2
+    ports:
+      - "8080:8080"
+    links:
+      - "data-flow-2-db"
