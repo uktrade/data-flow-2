@@ -1,5 +1,5 @@
 from dagster import asset
 
 @asset
-def my_asset() -> None:
-    print('Ingesting!')
+def licenses() -> None:
+    print('Fetching licenses')

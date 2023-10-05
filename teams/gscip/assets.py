@@ -1,5 +1,5 @@
 from dagster import asset
 
 @asset
-def my_asset() -> None:
-    print('Ingesting!')
+def supply_chains() -> None:
+    print('Ingesting supply chains')

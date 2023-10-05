@@ -1,5 +1,5 @@
 from dagster import asset
 
 @asset
-def my_asset() -> None:
-    print('Ingesting!')
+def predictions() -> None:
+    print('Predicting')
