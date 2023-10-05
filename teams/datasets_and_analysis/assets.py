@@ -1,4 +1,6 @@
-from dagster import AssetKey, Definitions, SourceAsset, asset
+from dagster import AssetKey, Definitions, SourceAsset, asset, get_dagster_logger
+
+logger = get_dagster_logger()
 
 predictions_asset = SourceAsset(key=AssetKey("predictions"))
 licenses_asset = SourceAsset(key=AssetKey("licences"))
@@ -10,4 +12,4 @@ supply_chains_assets = SourceAsset(key=AssetKey("supply_chains"))
     supply_chains_assets,
 ])
 def interactions() -> None:
-    print('Fetching interactions')
+    logger.info('Fetching interactions')
