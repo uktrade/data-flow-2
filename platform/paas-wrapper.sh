@@ -8,5 +8,9 @@ export DAGSTER_HOME=/home/vcap/app
 
 # Would need to be different for prod
 export CODE_SERVERS__DEET__HOST=data-flow-2-code-server-deet-staging.apps.internal
+export CODE_SERVERS__DATA_SCIENCE__HOST=data-flow-2-code-server-data-science-staging.apps.internal
+export CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST=data-flow-2-code-server-datasets-and-analysis-staging.apps.internal
+export CODE_SERVERS__GSCIP__HOST=data-flow-2-code-server-gscip-staging.apps.internal
+export CODE_SERVERS__LITE__HOST=data-flow-2-code-server-lite-staging.apps.internal
 
 exec "$@"

@@ -1,6 +1,6 @@
 ---
 applications:
-- name: data-flow-2-deet
+- name: data-flow-2-code-server-deet
   buildpacks:
    - python_buildpack
   default-route: false

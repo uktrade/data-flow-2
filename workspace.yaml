@@ -1,15 +1,23 @@
 load_from:
-  - python_package:
-      package_name: teams.data_science
+  - grpc_server:
+      host:
+        env: CODE_SERVERS__DATA_SCIENCE__HOST
+      port: 8080
       location_name: Data Science
-  - python_package:
-      package_name: teams.datasets_and_analysis
+  - grpc_server:
+      host:
+        env: CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST
+      port: 8080
       location_name: Datasets & Analysis
-  - python_package:
-      package_name: teams.gscip
+  - grpc_server:
+      host:
+        env: CODE_SERVERS__GSCIP__HOST
+      port: 8080
       location_name: GSCIP
-  - python_package:
-      package_name: teams.lite
+  - grpc_server:
+      host:
+        env: CODE_SERVERS__LITE__HOST
+      port: 8080
       location_name: LITE
   - grpc_server:
       host:

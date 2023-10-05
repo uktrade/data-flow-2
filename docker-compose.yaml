@@ -19,6 +19,10 @@ services:
       REDIS_URL: redis://data-flow-2-redis/
       DAGSTER_HOME: /app
       CODE_SERVERS__DEET__HOST: data-flow-2-code-server-deet
+      CODE_SERVERS__DATA_SCIENCE__HOST: data-flow-2-code-server-datasets-and-analysis
+      CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: data-flow-2-code-server-deet
+      CODE_SERVERS__GSCIP__HOST: data-flow-2-code-server-gscip
+      CODE_SERVERS__LITE__HOST: data-flow-2-code-server-lite
     volumes:
       - ${PWD}/teams:/app/teams
     ports:
@@ -38,6 +42,10 @@ services:
       REDIS_URL: redis://data-flow-2-redis/
       DAGSTER_HOME: /app
       CODE_SERVERS__DEET__HOST: data-flow-2-code-server-deet
+      CODE_SERVERS__DATA_SCIENCE__HOST: data-flow-2-code-server-datasets-and-analysis
+      CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: data-flow-2-code-server-deet
+      CODE_SERVERS__GSCIP__HOST: data-flow-2-code-server-gscip
+      CODE_SERVERS__LITE__HOST: data-flow-2-code-server-lite
     volumes:
       - ${PWD}/teams:/app/teams
     links:
@@ -60,7 +68,7 @@ services:
       - "data-flow-2-db"
       - "data-flow-2-redis"
 
-  data-flow-2-code-server-deet:
+  data-flow-2-code-server-deet: &code-server
     build:
       context: .
       dockerfile: Dockerfile
@@ -74,6 +82,22 @@ services:
     links:
       - "data-flow-2-db"
       - "data-flow-2-redis"
+
+  data-flow-2-code-server-data-science:
+    <<: *code-server
+    command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.data_science
+
+  data-flow-2-code-server-datasets-and-analysis:
+    <<: *code-server
+    command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.datasets_and_analysis
+
+  data-flow-2-code-server-gscip:
+    <<: *code-server
+    command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.gscip
+
+  data-flow-2-code-server-lite:
+    <<: *code-server
+    command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.lite
 
   data-flow-2-redis:
     image: redis

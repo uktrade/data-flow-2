@@ -1,0 +1,9 @@
+---
+applications:
+- name: data-flow-2-code-server-lite
+  buildpacks:
+   - python_buildpack
+  default-route: false
+  processes:
+  - type: web
+    command: './platform/paas-wrapper.sh dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.lite'
