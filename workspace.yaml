@@ -11,3 +11,6 @@ load_from:
   - python_package:
       package_name: teams.lite
       location_name: LITE
+  - python_package:
+      package_name: teams.deet
+      location_name: DEET
