@@ -2,5 +2,6 @@
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
-[tool.dagster]
-module_name = "data_flow_2"
+# Not sure if this is needed if we have a workspace.yaml with code locations
+# [tool.dagster]
+# module_name = "data_flow_2"

@@ -7,11 +7,11 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
-  data-flow-2:
+  data-flow-2-webserver:
     build:
       context: .
       dockerfile: Dockerfile
-    command: dagster dev --port 8080 --host 0.0.0.0 --workspace workspace.yaml
+    command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace workspace.yaml
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
       DAGSTER_HOME: /app
@@ -19,5 +19,18 @@ services:
       - ${PWD}/teams:/app/teams
     ports:
       - "8080:8080"
+    links:
+      - "data-flow-2-db"
+
+  data-flow-2-daemon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: dagster-daemon run
+    environment:
+      POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
+      DAGSTER_HOME: /app
+    volumes:
+      - ${PWD}/teams:/app/teams
     links:
       - "data-flow-2-db"
