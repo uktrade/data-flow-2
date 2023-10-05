@@ -51,6 +51,7 @@ def sync(
             on_before_visible=on_before_visible,
             high_watermark=high_watermark,
             delete=delete,
+            logger=logger,
         )
 
 specs = [
