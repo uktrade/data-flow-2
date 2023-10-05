@@ -1,4 +1,4 @@
-from dagster import asset, define_asset_job, AssetsDefinition
+from dagster import asset, AssetsDefinition, RetryPolicy, Backoff, get_dagster_logger
 
 import os
 
@@ -12,8 +12,10 @@ def sync(
     high_watermark="",
     delete="",
 ):
+    logger = get_dagster_logger()
     engine = sa.create_engine(os.environ['POSTGRES_URL'], future=True)
-
+    logger.info("Schema: %s", schema)
+    logger.info("Table name: %s", table_name)
     # The SQLAlchemy definition of the table to ingest data into
     metadata = sa.MetaData()
     table = sa.Table(
@@ -52,16 +54,23 @@ def sync(
         )
 
 specs = [
-    {"name": "CommodityCodesPipeline1", "schema": "dbt", "table_name": "commodity_codes"},
-    {"name": "CommodityCodesPipeline2", "schema": "dbt", "table_name": "commodity_codes2"},
+    {"schema": "dbt", "table_name": "commodity_codes"},
+    {"schema": "dbt", "table_name": "commodity_codes2"},
 ]
 
 
 def build_asset(spec) -> AssetsDefinition:
-    @asset(name=spec["name"])
+    schema=spec["schema"]
+    table_name=spec["table_name"]
+    @asset(
+            name=f"{schema}__{table_name}".format(),
+            retry_policy=RetryPolicy(
+                max_retries=5,
+                backoff=Backoff.EXPONENTIAL,
+                delay=60,
+    ))
     def _asset():
         sync(table_name=spec["table_name"], schema=spec["schema"])
-
     return _asset
 
 
