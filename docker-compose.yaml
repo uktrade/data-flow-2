@@ -18,6 +18,7 @@ services:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
       REDIS_URL: redis://data-flow-2-redis/
       DAGSTER_HOME: /app
+      CODE_SERVERS__DEET__HOST: data-flow-2-code-server-deet
     volumes:
       - ${PWD}/teams:/app/teams
     ports:
@@ -25,6 +26,7 @@ services:
     links:
       - "data-flow-2-db"
       - "data-flow-2-redis"
+      - "data-flow-2-code-server-deet"
 
   data-flow-2-daemon:
     build:
@@ -35,17 +37,34 @@ services:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
       REDIS_URL: redis://data-flow-2-redis/
       DAGSTER_HOME: /app
+      CODE_SERVERS__DEET__HOST: data-flow-2-code-server-deet
     volumes:
       - ${PWD}/teams:/app/teams
     links:
       - "data-flow-2-db"
       - "data-flow-2-redis"
+      - "data-flow-2-code-server-deet"
 
   data-flow-2-worker:
     build:
       context: .
       dockerfile: Dockerfile
     command: dagster-celery worker start -A dagster_celery.app --config-yaml executor.yaml
+    environment:
+      POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
+      REDIS_URL: redis://data-flow-2-redis/
+      DAGSTER_HOME: /app
+    volumes:
+      - ${PWD}/teams:/app/teams
+    links:
+      - "data-flow-2-db"
+      - "data-flow-2-redis"
+
+  data-flow-2-code-server-deet:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.deet
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
       REDIS_URL: redis://data-flow-2-redis/

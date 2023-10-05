@@ -11,6 +11,8 @@ load_from:
   - python_package:
       package_name: teams.lite
       location_name: LITE
-  - python_package:
-      package_name: teams.deet
+  - grpc_server:
+      host:
+        env: CODE_SERVERS__DEET__HOST
+      port: 8080
       location_name: DEET
