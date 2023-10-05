@@ -16,6 +16,7 @@ services:
     command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace workspace.yaml
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
+      REDIS_URL: redis://data-flow-2-redis/
       DAGSTER_HOME: /app
     volumes:
       - ${PWD}/teams:/app/teams
@@ -23,6 +24,7 @@ services:
       - "8080:8080"
     links:
       - "data-flow-2-db"
+      - "data-flow-2-redis"
 
   data-flow-2-daemon:
     build:
@@ -31,8 +33,28 @@ services:
     command: dagster-daemon run
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
+      REDIS_URL: redis://data-flow-2-redis/
       DAGSTER_HOME: /app
     volumes:
       - ${PWD}/teams:/app/teams
     links:
       - "data-flow-2-db"
+      - "data-flow-2-redis"
+
+  data-flow-2-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: dagster-celery worker start -A dagster_celery.app --config-yaml executor.yaml
+    environment:
+      POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
+      REDIS_URL: redis://data-flow-2-redis/
+      DAGSTER_HOME: /app
+    volumes:
+      - ${PWD}/teams:/app/teams
+    links:
+      - "data-flow-2-db"
+      - "data-flow-2-redis"
+
+  data-flow-2-redis:
+    image: redis

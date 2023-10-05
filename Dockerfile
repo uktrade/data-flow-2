@@ -10,4 +10,4 @@ COPY setup.py pyproject.toml .
 RUN \
 	pip install -e ".[dev]"
 
-COPY dagster.yaml workspace.yaml .
+COPY dagster.yaml workspace.yaml executor.yaml .

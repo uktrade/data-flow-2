@@ -5,10 +5,12 @@ setup(
     packages=find_packages(exclude=["data_flow_2_tests"]),
     install_requires=[
         "dagster",
+        "dagster-celery",
         "dagster-cloud",
         "dagster-webserver",
         "dagster-postgres",
         "pg-bulk-ingest",
+        "redis",
         "psycopg==3.1.10",
     ],
     extras_require={"dev": ["pytest"]},
