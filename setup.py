@@ -8,6 +8,8 @@ setup(
         "dagster-cloud",
         "dagster-webserver",
         "dagster-postgres",
+        "pg-bulk-ingest",
+        "psycopg==3.1.10",
     ],
     extras_require={"dev": ["pytest"]},
 )
