@@ -31,16 +31,20 @@ services:
       - "data-flow-2-db"
       - "data-flow-2-redis"
       - "data-flow-2-code-server-deet"
+      - "data-flow-2-code-server-gscip"
+      - "data-flow-2-code-server-data-science"
+      - "data-flow-2-code-server-lite"
+      - "data-flow-2-code-server-datasets-and-analysis"
 
   data-flow-2-daemon:
     build:
       context: .
       dockerfile: ./platform/Dockerfile
-    command: dagster-daemon run
+    command: dagster-daemon run --workspace ./platform/workspace.yaml
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
       REDIS_URL: redis://data-flow-2-redis/
-      DAGSTER_HOME: /app
+      DAGSTER_HOME: /app/platform
       CODE_SERVERS__DEET__HOST: data-flow-2-code-server-deet
       CODE_SERVERS__DATA_SCIENCE__HOST: data-flow-2-code-server-datasets-and-analysis
       CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: data-flow-2-code-server-deet
@@ -52,6 +56,10 @@ services:
       - "data-flow-2-db"
       - "data-flow-2-redis"
       - "data-flow-2-code-server-deet"
+      - "data-flow-2-code-server-gscip"
+      - "data-flow-2-code-server-data-science"
+      - "data-flow-2-code-server-lite"
+      - "data-flow-2-code-server-datasets-and-analysis"
 
   data-flow-2-worker:
     build:
@@ -61,7 +69,7 @@ services:
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
       REDIS_URL: redis://data-flow-2-redis/
-      DAGSTER_HOME: /app
+      DAGSTER_HOME: /app/platform
     volumes:
       - ${PWD}/teams:/app/teams
     links:
@@ -76,7 +84,7 @@ services:
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
       REDIS_URL: redis://data-flow-2-redis/
-      DAGSTER_HOME: /app
+      DAGSTER_HOME: /app/platform
     volumes:
       - ${PWD}/teams:/app/teams
     links:
