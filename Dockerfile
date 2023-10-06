@@ -1,13 +1,10 @@
 FROM python:3.11-buster
 ENV PYTHONUNBUFFERED 1
 
-RUN \
-	mkdir -p /app
-
+RUN mkdir -p /app
 WORKDIR /app
 
-COPY setup.py pyproject.toml .
-RUN \
-	pip install -e ".[dev]"
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 COPY dagster.yaml workspace.yaml executor.yaml .
