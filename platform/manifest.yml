@@ -6,7 +6,7 @@ applications:
   default-route: true
   processes:
   - type: web
-    command: './platform/paas-wrapper.sh dagster-webserver --workspace workspace.yaml --port 8080 --host 0.0.0.0'
+    command: './platform/paas-wrapper.sh dagster-webserver --workspace ./platform/workspace.yaml --port 8080 --host 0.0.0.0'
   - type: daemon
     command: './platform/paas-wrapper.sh dagster-daemon run'
   - type: worker
