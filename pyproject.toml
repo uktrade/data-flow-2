@@ -1,7 +1,0 @@
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
-# Not sure if this is needed if we have a workspace.yaml with code locations
-# [tool.dagster]
-# module_name = "data_flow_2"
