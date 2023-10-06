@@ -15,14 +15,6 @@ services:
       timeout: 5s
       retries: 120
 
-  redis:
-    image: redis
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
-      interval: 2s
-      timeout: 3s
-      retries: 20
-
   web:
     build:
       context: .
@@ -30,19 +22,18 @@ services:
     command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace ./pipelines_platform/workspace.yaml
     environment:
       POSTGRES_URL: postgresql://postgres:postgres@db/postgres
-      REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/pipelines_platform
       CODE_SERVERS__DEET__HOST: code-server-deet
       CODE_SERVERS__DATA_SCIENCE__HOST: code-server-data-science
       CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: code-server-datasets-and-analysis
       CODE_SERVERS__GSCIP__HOST: code-server-gscip
       CODE_SERVERS__LITE__HOST: code-server-lite
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     depends_on:
       db:
-        condition: service_healthy
-      redis:
         condition: service_healthy
       code-server-deet:
         condition: service_healthy
@@ -62,17 +53,16 @@ services:
     command: dagster-daemon run --workspace ./pipelines_platform/workspace.yaml
     environment:
       POSTGRES_URL: postgresql://postgres:postgres@db/postgres
-      REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/pipelines_platform
       CODE_SERVERS__DEET__HOST: code-server-deet
       CODE_SERVERS__DATA_SCIENCE__HOST: code-server-datasets-and-analysis
       CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: code-server-deet
       CODE_SERVERS__GSCIP__HOST: code-server-gscip
       CODE_SERVERS__LITE__HOST: code-server-lite
+    env_file:
+      - .env
     depends_on:
       db:
-        condition: service_healthy
-      redis:
         condition: service_healthy
       code-server-deet:
         condition: service_healthy
@@ -83,23 +73,6 @@ services:
       code-server-lite:
         condition: service_healthy
       code-server-datasets-and-analysis:
-        condition: service_healthy
-
-  worker:
-    build:
-      context: .
-      dockerfile: ./pipelines_platform/Dockerfile
-    command: dagster-celery worker start -A dagster_celery.app --config-yaml ./pipelines_platform/executor.yaml
-    environment:
-      POSTGRES_URL: postgresql://postgres:postgres@db/postgres
-      REDIS_URL: redis://redis/
-      DAGSTER_HOME: /app/pipelines_platform
-    volumes:
-      - ${PWD}/teams:/app/teams
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
         condition: service_healthy
 
   code-server-deet: &code-server
@@ -115,14 +88,11 @@ services:
       retries: 5
     environment:
       POSTGRES_URL: postgresql://postgres:postgres@db/postgres
-      REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/pipelines_platform
     volumes:
       - ${PWD}/teams:/app/teams
     depends_on:
       db:
-        condition: service_healthy
-      redis:
         condition: service_healthy
 
   code-server-data-science:

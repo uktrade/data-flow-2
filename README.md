@@ -10,6 +10,7 @@ data-flow-2 is an instance of Dagster together with the code of pipelines that t
 To run Dagster locally, you need [Docker](https://www.docker.com/products/docker-desktop/) installed. Then run
 
 ```bash
+cp sample.env .env
 docker compose up --build
 ```
 

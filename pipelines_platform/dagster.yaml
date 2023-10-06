@@ -4,3 +4,11 @@ storage:
   postgres:
     postgres_url:
       env: POSTGRES_URL
+# Dagster doesn't seem to support this being dynamic, so we replace
+# this via sed before running anything Dagster-y
+run_launcher:
+  module: __RUN_LAUNCHER_MODULE__
+  class: __RUN_LAUNCHER_CLASS__
+run_monitoring:
+  enabled: true
+  poll_interval_seconds: 5
