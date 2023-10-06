@@ -37,8 +37,6 @@ services:
       CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: code-server-deet
       CODE_SERVERS__GSCIP__HOST: code-server-gscip
       CODE_SERVERS__LITE__HOST: code-server-lite
-    volumes:
-      - ${PWD}/teams:/app/teams
     ports:
       - "8080:8080"
     depends_on:
@@ -71,8 +69,6 @@ services:
       CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: code-server-deet
       CODE_SERVERS__GSCIP__HOST: code-server-gscip
       CODE_SERVERS__LITE__HOST: code-server-lite
-    volumes:
-      - ${PWD}/teams:/app/teams
     depends_on:
       db:
         condition: service_healthy
