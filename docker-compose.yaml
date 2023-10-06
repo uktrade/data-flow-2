@@ -81,6 +81,12 @@ services:
       context: .
       dockerfile: ./platform/Dockerfile
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.deet
+    healthcheck:
+      test: ["CMD-SHELL", "echo '' > /dev/tcp/127.0.0.1/8080"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+      start_period: 2s
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
       REDIS_URL: redis://data-flow-2-redis/
