@@ -37,3 +37,15 @@ To lint all files:
 ```shell
 pre-commit run --all-files
 ```
+
+
+## Deployment to staging
+
+```shell
+cf push data-flow-2-staging -f pipelines_platform/manifest.yaml
+cf push data-flow-2-code-server-data-science-staging -f pipelines_platform/manifest-code-server.yaml
+cf push data-flow-2-code-server-datasets-and-analysis-staging -f pipelines_platform/manifest-code-server.yaml
+cf push data-flow-2-code-server-deet-staging -f pipelines_platform/manifest-code-server.yaml
+cf push data-flow-2-code-server-gscip-staging -f pipelines_platform/manifest-code-server.yaml
+cf push data-flow-2-code-server-lite-staging -f pipelines_platform/manifest-code-server.yaml
+```
