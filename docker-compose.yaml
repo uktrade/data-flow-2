@@ -7,7 +7,7 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_USER: "postgres"
-      POSTGRES_HOST_AUTH_METHOD: "trust"
+      POSTGRES_PASSWORD: "postgres"
 
   web:
     build:
@@ -15,7 +15,7 @@ services:
       dockerfile: ./platform/Dockerfile
     command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace ./platform/workspace.yaml
     environment:
-      POSTGRES_URL: postgresql://postgres@db/postgres
+      POSTGRES_URL: postgresql://postgres:postgres@db/postgres
       REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/platform
       CODE_SERVERS__DEET__HOST: code-server-deet
@@ -42,7 +42,7 @@ services:
       dockerfile: ./platform/Dockerfile
     command: dagster-daemon run --workspace ./platform/workspace.yaml
     environment:
-      POSTGRES_URL: postgresql://postgres@db/postgres
+      POSTGRES_URL: postgresql://postgres:postgres@db/postgres
       REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/platform
       CODE_SERVERS__DEET__HOST: code-server-deet
@@ -67,7 +67,7 @@ services:
       dockerfile: ./platform/Dockerfile
     command: dagster-celery worker start -A dagster_celery.app --config-yaml ./platform/executor.yaml
     environment:
-      POSTGRES_URL: postgresql://postgres@db/postgres
+      POSTGRES_URL: postgresql://postgres:postgres@db/postgres
       REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/platform
     volumes:
@@ -82,13 +82,13 @@ services:
       dockerfile: ./platform/Dockerfile
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.deet
     healthcheck:
-      test: ["CMD-SHELL", "echo '' > /dev/tcp/127.0.0.1/8080"]
+      test: ["dagster", "api", "grpc-health-check", "--port", "8080"]
+      start_period: 30s
       interval: 2s
       timeout: 2s
       retries: 5
-      start_period: 2s
     environment:
-      POSTGRES_URL: postgresql://postgres@db/postgres
+      POSTGRES_URL: postgresql://postgres:postgres@db/postgres
       REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/platform
     volumes:
