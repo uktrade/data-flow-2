@@ -26,12 +26,12 @@ services:
   web:
     build:
       context: .
-      dockerfile: ./platform/Dockerfile
-    command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace ./platform/workspace.yaml
+      dockerfile: ./pipelines_platform/Dockerfile
+    command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace ./pipelines_platform/workspace.yaml
     environment:
       POSTGRES_URL: postgresql://postgres:postgres@db/postgres
       REDIS_URL: redis://redis/
-      DAGSTER_HOME: /app/platform
+      DAGSTER_HOME: /app/pipelines_platform
       CODE_SERVERS__DEET__HOST: code-server-deet
       CODE_SERVERS__DATA_SCIENCE__HOST: code-server-datasets-and-analysis
       CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: code-server-deet
@@ -58,12 +58,12 @@ services:
   daemon:
     build:
       context: .
-      dockerfile: ./platform/Dockerfile
-    command: dagster-daemon run --workspace ./platform/workspace.yaml
+      dockerfile: ./pipelines_platform/Dockerfile
+    command: dagster-daemon run --workspace ./pipelines_platform/workspace.yaml
     environment:
       POSTGRES_URL: postgresql://postgres:postgres@db/postgres
       REDIS_URL: redis://redis/
-      DAGSTER_HOME: /app/platform
+      DAGSTER_HOME: /app/pipelines_platform
       CODE_SERVERS__DEET__HOST: code-server-deet
       CODE_SERVERS__DATA_SCIENCE__HOST: code-server-datasets-and-analysis
       CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: code-server-deet
@@ -88,12 +88,12 @@ services:
   worker:
     build:
       context: .
-      dockerfile: ./platform/Dockerfile
-    command: dagster-celery worker start -A dagster_celery.app --config-yaml ./platform/executor.yaml
+      dockerfile: ./pipelines_platform/Dockerfile
+    command: dagster-celery worker start -A dagster_celery.app --config-yaml ./pipelines_platform/executor.yaml
     environment:
       POSTGRES_URL: postgresql://postgres:postgres@db/postgres
       REDIS_URL: redis://redis/
-      DAGSTER_HOME: /app/platform
+      DAGSTER_HOME: /app/pipelines_platform
     volumes:
       - ${PWD}/teams:/app/teams
     depends_on:
@@ -105,7 +105,7 @@ services:
   code-server-deet: &code-server
     build:
       context: .
-      dockerfile: ./platform/Dockerfile
+      dockerfile: ./pipelines_platform/Dockerfile
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.deet
     healthcheck:
       test: ["CMD-SHELL", "dagster api grpc-health-check --port 8080"]
@@ -116,7 +116,7 @@ services:
     environment:
       POSTGRES_URL: postgresql://postgres:postgres@db/postgres
       REDIS_URL: redis://redis/
-      DAGSTER_HOME: /app/platform
+      DAGSTER_HOME: /app/pipelines_platform
     volumes:
       - ${PWD}/teams:/app/teams
     depends_on:

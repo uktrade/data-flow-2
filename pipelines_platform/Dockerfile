@@ -7,4 +7,4 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY platform ./platform
+COPY pipelines_platform ./pipelines_platform

@@ -1,0 +1,13 @@
+---
+applications:
+- name: data-flow-2
+  buildpacks:
+   - python_buildpack
+  default-route: true
+  processes:
+  - type: web
+    command: './pipelines_platform/paas-wrapper.sh dagster-webserver --workspace ./pipelines_platform/workspace.yaml --port 8080 --host 0.0.0.0'
+  - type: daemon
+    command: './pipelines_platform/paas-wrapper.sh dagster-daemon run --workspace ./pipelines_platform/workspace.yaml'
+  - type: worker
+    command: './pipelines_platform/paas-wrapper.sh dagster-celery worker start -A dagster_celery.app --config-yaml ./pipelines_platform/executor.yaml'
