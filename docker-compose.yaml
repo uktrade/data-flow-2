@@ -33,8 +33,8 @@ services:
       REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/pipelines_platform
       CODE_SERVERS__DEET__HOST: code-server-deet
-      CODE_SERVERS__DATA_SCIENCE__HOST: code-server-datasets-and-analysis
-      CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: code-server-deet
+      CODE_SERVERS__DATA_SCIENCE__HOST: code-server-data-science
+      CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: code-server-datasets-and-analysis
       CODE_SERVERS__GSCIP__HOST: code-server-gscip
       CODE_SERVERS__LITE__HOST: code-server-lite
     ports:
