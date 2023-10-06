@@ -1,0 +1,7 @@
+---
+applications:
+- buildpacks:
+   - python_buildpack
+  processes:
+  - type: web
+    command: './platform/paas-wrapper.sh dagster code-server start --port 8080 --host 0.0.0.0 --module-name $CODE_SERVER__MODULE_NAME'
