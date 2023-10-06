@@ -62,18 +62,19 @@ specs = [
 
 
 def build_asset(spec) -> AssetsDefinition:
-            schema = spec["schema"]
-        table_name=spec["table_name"]
-        @asset(
-                name=f"{schema}__{table_name}".format(),
-                retry_policy=RetryPolicy(
-                    max_retries=5,
-                    backoff=Backoff.EXPONENTIAL,
-                    delay=60,
+    schema = spec["schema"]
+    table_name = spec["table_name"]
+
+    @asset(
+        name=f"{schema}__{table_name}".format(),
+        retry_policy=RetryPolicy(
+            max_retries=5,
+            backoff=Backoff.EXPONENTIAL,
+            delay=60,
         ))
-        def _asset():
-            sync(table_name=spec["table_name"], schema=spec["schema"])
-        return _asset
+    def _asset():
+        sync(table_name=spec["table_name"], schema=spec["schema"])
+    return _asset
 
 
-assets=[build_asset(spec) for spec in specs]
+assets = [build_asset(spec) for spec in specs]
