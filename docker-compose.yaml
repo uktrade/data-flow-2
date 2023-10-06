@@ -8,6 +8,20 @@ services:
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --host 127.0.0.1 --user postgres"]
+      start_period: 30s
+      interval: 5s
+      timeout: 5s
+      retries: 120
+
+  redis:
+    image: redis
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
 
   web:
     build:
@@ -27,14 +41,21 @@ services:
       - ${PWD}/teams:/app/teams
     ports:
       - "8080:8080"
-    links:
-      - "db"
-      - "redis"
-      - "code-server-deet"
-      - "code-server-gscip"
-      - "code-server-data-science"
-      - "code-server-lite"
-      - "code-server-datasets-and-analysis"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      code-server-deet:
+        condition: service_healthy
+      code-server-gscip:
+        condition: service_healthy
+      code-server-data-science:
+        condition: service_healthy
+      code-server-lite:
+        condition: service_healthy
+      code-server-datasets-and-analysis:
+        condition: service_healthy
 
   daemon:
     build:
@@ -52,14 +73,21 @@ services:
       CODE_SERVERS__LITE__HOST: code-server-lite
     volumes:
       - ${PWD}/teams:/app/teams
-    links:
-      - "db"
-      - "redis"
-      - "code-server-deet"
-      - "code-server-gscip"
-      - "code-server-data-science"
-      - "code-server-lite"
-      - "code-server-datasets-and-analysis"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      code-server-deet:
+        condition: service_healthy
+      code-server-gscip:
+        condition: service_healthy
+      code-server-data-science:
+        condition: service_healthy
+      code-server-lite:
+        condition: service_healthy
+      code-server-datasets-and-analysis:
+        condition: service_healthy
 
   worker:
     build:
@@ -72,9 +100,11 @@ services:
       DAGSTER_HOME: /app/platform
     volumes:
       - ${PWD}/teams:/app/teams
-    links:
-      - "db"
-      - "redis"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   code-server-deet: &code-server
     build:
@@ -82,7 +112,7 @@ services:
       dockerfile: ./platform/Dockerfile
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.deet
     healthcheck:
-      test: ["dagster", "api", "grpc-health-check", "--port", "8080"]
+      test: ["CMD-SHELL", "dagster api grpc-health-check --port 8080"]
       start_period: 30s
       interval: 2s
       timeout: 2s
@@ -93,9 +123,11 @@ services:
       DAGSTER_HOME: /app/platform
     volumes:
       - ${PWD}/teams:/app/teams
-    links:
-      - "db"
-      - "redis"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   code-server-data-science:
     <<: *code-server
@@ -112,6 +144,3 @@ services:
   code-server-lite:
     <<: *code-server
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.lite
-
-  redis:
-    image: redis
