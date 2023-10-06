@@ -10,4 +10,4 @@ applications:
   - type: daemon
     command: './platform/paas-wrapper.sh dagster-daemon run'
   - type: worker
-    command: './platform/paas-wrapper.sh dagster-celery worker start -A dagster_celery.app --config-yaml executor.yaml'
+    command: './platform/paas-wrapper.sh dagster-celery worker start -A dagster_celery.app --config-yaml ./platform/executor.yaml'

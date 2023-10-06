@@ -12,12 +12,12 @@ services:
   data-flow-2-webserver:
     build:
       context: .
-      dockerfile: Dockerfile
-    command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace workspace.yaml
+      dockerfile: ./platform/Dockerfile
+    command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace ./platform/workspace.yaml
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
       REDIS_URL: redis://data-flow-2-redis/
-      DAGSTER_HOME: /app
+      DAGSTER_HOME: /app/platform
       CODE_SERVERS__DEET__HOST: data-flow-2-code-server-deet
       CODE_SERVERS__DATA_SCIENCE__HOST: data-flow-2-code-server-datasets-and-analysis
       CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: data-flow-2-code-server-deet
@@ -35,7 +35,7 @@ services:
   data-flow-2-daemon:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./platform/Dockerfile
     command: dagster-daemon run
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
@@ -56,8 +56,8 @@ services:
   data-flow-2-worker:
     build:
       context: .
-      dockerfile: Dockerfile
-    command: dagster-celery worker start -A dagster_celery.app --config-yaml executor.yaml
+      dockerfile: ./platform/Dockerfile
+    command: dagster-celery worker start -A dagster_celery.app --config-yaml ./platform/executor.yaml
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
       REDIS_URL: redis://data-flow-2-redis/
@@ -71,7 +71,7 @@ services:
   data-flow-2-code-server-deet: &code-server
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./platform/Dockerfile
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.deet
     environment:
       POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
