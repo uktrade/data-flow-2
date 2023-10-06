@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  data-flow-2-db:
+  db:
     image: postgres:16
     ports:
       - "5432:5432"
@@ -9,74 +9,74 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
-  data-flow-2-webserver:
+  webserver:
     build:
       context: .
       dockerfile: ./platform/Dockerfile
     command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace ./platform/workspace.yaml
     environment:
-      POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
-      REDIS_URL: redis://data-flow-2-redis/
+      POSTGRES_URL: postgresql://postgres@db/postgres
+      REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/platform
-      CODE_SERVERS__DEET__HOST: data-flow-2-code-server-deet
-      CODE_SERVERS__DATA_SCIENCE__HOST: data-flow-2-code-server-datasets-and-analysis
-      CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: data-flow-2-code-server-deet
-      CODE_SERVERS__GSCIP__HOST: data-flow-2-code-server-gscip
-      CODE_SERVERS__LITE__HOST: data-flow-2-code-server-lite
+      CODE_SERVERS__DEET__HOST: code-server-deet
+      CODE_SERVERS__DATA_SCIENCE__HOST: code-server-datasets-and-analysis
+      CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: code-server-deet
+      CODE_SERVERS__GSCIP__HOST: code-server-gscip
+      CODE_SERVERS__LITE__HOST: code-server-lite
     volumes:
       - ${PWD}/teams:/app/teams
     ports:
       - "8080:8080"
     links:
-      - "data-flow-2-db"
-      - "data-flow-2-redis"
-      - "data-flow-2-code-server-deet"
-      - "data-flow-2-code-server-gscip"
-      - "data-flow-2-code-server-data-science"
-      - "data-flow-2-code-server-lite"
-      - "data-flow-2-code-server-datasets-and-analysis"
+      - "db"
+      - "redis"
+      - "code-server-deet"
+      - "code-server-gscip"
+      - "code-server-data-science"
+      - "code-server-lite"
+      - "code-server-datasets-and-analysis"
 
-  data-flow-2-daemon:
+  daemon:
     build:
       context: .
       dockerfile: ./platform/Dockerfile
     command: dagster-daemon run --workspace ./platform/workspace.yaml
     environment:
-      POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
-      REDIS_URL: redis://data-flow-2-redis/
+      POSTGRES_URL: postgresql://postgres@db/postgres
+      REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/platform
-      CODE_SERVERS__DEET__HOST: data-flow-2-code-server-deet
-      CODE_SERVERS__DATA_SCIENCE__HOST: data-flow-2-code-server-datasets-and-analysis
-      CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: data-flow-2-code-server-deet
-      CODE_SERVERS__GSCIP__HOST: data-flow-2-code-server-gscip
-      CODE_SERVERS__LITE__HOST: data-flow-2-code-server-lite
+      CODE_SERVERS__DEET__HOST: code-server-deet
+      CODE_SERVERS__DATA_SCIENCE__HOST: code-server-datasets-and-analysis
+      CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: code-server-deet
+      CODE_SERVERS__GSCIP__HOST: code-server-gscip
+      CODE_SERVERS__LITE__HOST: code-server-lite
     volumes:
       - ${PWD}/teams:/app/teams
     links:
-      - "data-flow-2-db"
-      - "data-flow-2-redis"
-      - "data-flow-2-code-server-deet"
-      - "data-flow-2-code-server-gscip"
-      - "data-flow-2-code-server-data-science"
-      - "data-flow-2-code-server-lite"
-      - "data-flow-2-code-server-datasets-and-analysis"
+      - "db"
+      - "redis"
+      - "code-server-deet"
+      - "code-server-gscip"
+      - "code-server-data-science"
+      - "code-server-lite"
+      - "code-server-datasets-and-analysis"
 
-  data-flow-2-worker:
+  worker:
     build:
       context: .
       dockerfile: ./platform/Dockerfile
     command: dagster-celery worker start -A dagster_celery.app --config-yaml ./platform/executor.yaml
     environment:
-      POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
-      REDIS_URL: redis://data-flow-2-redis/
+      POSTGRES_URL: postgresql://postgres@db/postgres
+      REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/platform
     volumes:
       - ${PWD}/teams:/app/teams
     links:
-      - "data-flow-2-db"
-      - "data-flow-2-redis"
+      - "db"
+      - "redis"
 
-  data-flow-2-code-server-deet: &code-server
+  code-server-deet: &code-server
     build:
       context: .
       dockerfile: ./platform/Dockerfile
@@ -88,30 +88,30 @@ services:
       retries: 5
       start_period: 2s
     environment:
-      POSTGRES_URL: postgresql://postgres@data-flow-2-db/postgres
-      REDIS_URL: redis://data-flow-2-redis/
+      POSTGRES_URL: postgresql://postgres@db/postgres
+      REDIS_URL: redis://redis/
       DAGSTER_HOME: /app/platform
     volumes:
       - ${PWD}/teams:/app/teams
     links:
-      - "data-flow-2-db"
-      - "data-flow-2-redis"
+      - "db"
+      - "redis"
 
-  data-flow-2-code-server-data-science:
+  code-server-data-science:
     <<: *code-server
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.data_science
 
-  data-flow-2-code-server-datasets-and-analysis:
+  code-server-datasets-and-analysis:
     <<: *code-server
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.datasets_and_analysis
 
-  data-flow-2-code-server-gscip:
+  code-server-gscip:
     <<: *code-server
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.gscip
 
-  data-flow-2-code-server-lite:
+  code-server-lite:
     <<: *code-server
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.lite
 
-  data-flow-2-redis:
+  redis:
     image: redis
