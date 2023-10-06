@@ -54,6 +54,7 @@ def sync(
             logger=logger,
         )
 
+
 specs = [
     {"schema": "dbt", "table_name": "commodity_codes"},
     {"schema": "dbt", "table_name": "commodity_codes2"},
@@ -61,18 +62,18 @@ specs = [
 
 
 def build_asset(spec) -> AssetsDefinition:
-    schema=spec["schema"]
-    table_name=spec["table_name"]
-    @asset(
-            name=f"{schema}__{table_name}".format(),
-            retry_policy=RetryPolicy(
-                max_retries=5,
-                backoff=Backoff.EXPONENTIAL,
-                delay=60,
-    ))
-    def _asset():
-        sync(table_name=spec["table_name"], schema=spec["schema"])
-    return _asset
+            schema = spec["schema"]
+        table_name=spec["table_name"]
+        @asset(
+                name=f"{schema}__{table_name}".format(),
+                retry_policy=RetryPolicy(
+                    max_retries=5,
+                    backoff=Backoff.EXPONENTIAL,
+                    delay=60,
+        ))
+        def _asset():
+            sync(table_name=spec["table_name"], schema=spec["schema"])
+        return _asset
 
 
 assets=[build_asset(spec) for spec in specs]
