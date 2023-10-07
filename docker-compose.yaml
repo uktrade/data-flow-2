@@ -83,7 +83,7 @@ services:
     ports:
       - "8080:8080"
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://127.0.0.0:8080/server_info || exit 1  "]
+      test: ["CMD-SHELL", "curl --fail http://127.0.0.0:8080/server_info || exit 1"]
       start_period: 30s
       interval: 2s
       timeout: 5s
@@ -92,6 +92,12 @@ services:
   daemon:
     <<: *platform-service
     command: dagster-daemon run --workspace ./pipelines_platform/workspace.yaml
+    healthcheck:
+      test: ["CMD-SHELL", "dagster-daemon liveness-check"]
+      start_period: 60s
+      interval: 2s
+      timeout: 10s
+      retries: 10
 
   code-server-deet:
     <<: *code-server-service
