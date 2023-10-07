@@ -1,0 +1,14 @@
+# For Dagster to find the launcher, it seems to have to be a "properly" installed package
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cf-launcher"
+version = "0.0.0.dev0"
+
+[tool.hatch.build]
+include = [
+  "cf_launcher.py"
+]

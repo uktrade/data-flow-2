@@ -1,8 +1,7 @@
 dagster
-dagster-celery
-dagster-cloud
 dagster-postgres
 dagster-webserver
 pg-bulk-ingest
 psycopg
 redis
+file:./pipelines_platform/cf_launcher
