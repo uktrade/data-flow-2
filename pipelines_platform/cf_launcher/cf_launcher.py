@@ -155,8 +155,8 @@ class CFLauncher(RunLauncher[T_DagsterInstance], ConfigurableClass):
             message="Requesting CloudFoundry task resources",
             dagster_run=run,
             engine_event_data=EngineEventData({
-                "Task memory_in_mb": memory_in_mb if memory_in_mb if not None else 'default',
-                "Task disk_in_mb": disk_in_mb if disk_in_mb if not None else 'default',
+                "Task memory_in_mb": memory_in_mb if memory_in_mb is not None else 'default',
+                "Task disk_in_mb": disk_in_mb if disk_in_mb is not None else 'default',
             }),
             cls=self.__class__,
         )
