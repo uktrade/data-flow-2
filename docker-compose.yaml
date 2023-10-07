@@ -1,25 +1,24 @@
+#################################################################################################
+# There are 3 types of docker-compose services in this file
+#
+# 1. Low level instfrastructure
+# db: the PostgreSQL database that all other services connect to
+#
+# 2. Platform services
+# web:    Dagster web server
+# daemon: Dagaster daemon
+#
+# 3. Code server services
+# code-server-*: a service for each Dagster code location
+#
+# Duplication is reduced by using "x-" extensions as fragments with the "<<" YAML merge type
+
 version: '3'
 
-services:
-  db:
-    image: postgres:16
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready --host 127.0.0.1 --user postgres"]
-      start_period: 30s
-      interval: 2s
-      timeout: 5s
-      retries: 120
-
-  web:
+x-platform-service: &platform-service
     build:
       context: .
       dockerfile: ./pipelines_platform/Dockerfile
-    command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace ./pipelines_platform/workspace.yaml
     environment:
       POSTGRES_URL: postgresql://postgres:postgres@db/postgres
       DAGSTER_HOME: /app/pipelines_platform
@@ -46,40 +45,10 @@ services:
       code-server-datasets-and-analysis:
         condition: service_healthy
 
-  daemon:
+x-code-server-service: &code-server-service
     build:
       context: .
       dockerfile: ./pipelines_platform/Dockerfile
-    command: dagster-daemon run --workspace ./pipelines_platform/workspace.yaml
-    environment:
-      POSTGRES_URL: postgresql://postgres:postgres@db/postgres
-      DAGSTER_HOME: /app/pipelines_platform
-      CODE_SERVERS__DEET__HOST: code-server-deet
-      CODE_SERVERS__DATA_SCIENCE__HOST: code-server-datasets-and-analysis
-      CODE_SERVERS__DATASETS_AND_ANALYSIS__HOST: code-server-deet
-      CODE_SERVERS__GSCIP__HOST: code-server-gscip
-      CODE_SERVERS__LITE__HOST: code-server-lite
-    env_file:
-      - .env
-    depends_on:
-      db:
-        condition: service_healthy
-      code-server-deet:
-        condition: service_healthy
-      code-server-gscip:
-        condition: service_healthy
-      code-server-data-science:
-        condition: service_healthy
-      code-server-lite:
-        condition: service_healthy
-      code-server-datasets-and-analysis:
-        condition: service_healthy
-
-  code-server-deet: &code-server
-    build:
-      context: .
-      dockerfile: ./pipelines_platform/Dockerfile
-    command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.deet
     healthcheck:
       test: ["CMD-SHELL", "dagster api grpc-health-check --port 8080"]
       start_period: 30s
@@ -95,18 +64,47 @@ services:
       db:
         condition: service_healthy
 
+services:
+  db:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --host 127.0.0.1 --user postgres"]
+      start_period: 30s
+      interval: 2s
+      timeout: 5s
+      retries: 120
+
+  web:
+    <<: *platform-service
+    command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace ./pipelines_platform/workspace.yaml
+    ports:
+      - "8080:8080"
+
+  daemon:
+    <<: *platform-service
+    command: dagster-daemon run --workspace ./pipelines_platform/workspace.yaml
+
+  code-server-deet:
+    <<: *code-server-service
+    command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.deet
+
   code-server-data-science:
-    <<: *code-server
+    <<: *code-server-service
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.data_science
 
   code-server-datasets-and-analysis:
-    <<: *code-server
+    <<: *code-server-service
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.datasets_and_analysis
 
   code-server-gscip:
-    <<: *code-server
+    <<: *code-server-service
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.gscip
 
   code-server-lite:
-    <<: *code-server
+    <<: *code-server-service
     command: dagster code-server start --port 8080 --host 0.0.0.0 --module-name teams.lite
