@@ -199,10 +199,10 @@ class CFLauncher(RunLauncher[T_DagsterInstance], ConfigurableClass):
             message="Launching run as CloudFoundry task",
             dagster_run=run,
             engine_event_data=EngineEventData({
-                "CF task guid": task['guid'],
-                "CF task name": task['name'],
-                "CF task memory_in_mb": task['memory_in_mb'],
-                "CF task disk_in_mb": task['disk_in_mb'],
+                "Task guid": task['guid'],
+                "Task name": task['name'],
+                "Task memory_in_mb": task['memory_in_mb'],
+                "Task disk_in_mb": task['disk_in_mb'],
             }),
             cls=self.__class__,
         )
