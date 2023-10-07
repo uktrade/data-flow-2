@@ -82,6 +82,12 @@ services:
     command: dagster-webserver --port 8080 --host 0.0.0.0 --workspace ./pipelines_platform/workspace.yaml
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://127.0.0.0:8080/server_info || exit 1  "]
+      start_period: 30s
+      interval: 2s
+      timeout: 5s
+      retries: 120
 
   daemon:
     <<: *platform-service
