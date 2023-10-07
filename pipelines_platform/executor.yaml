@@ -1,6 +1,0 @@
-execution:
-  config:
-    broker:
-      env: REDIS_URL
-    backend:
-      env: REDIS_URL
