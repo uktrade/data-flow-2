@@ -136,8 +136,30 @@ class CFLauncher(RunLauncher[T_DagsterInstance], ConfigurableClass):
             set_exit_code_on_failure=True,
         ).get_command_args()
 
-        print("Code location name", code_location.name)
-        print("App name", self.mapping[code_location.name])
+        # Find max memory and disk of run and all operators
+        op_def_snaps = self._instance.get_job_snapshot(
+            run.job_snapshot_id).node_defs_snapshot.op_def_snaps
+        memory_in_mb_tags = [
+            op_def_snap.tags.get("launcher/memory_in_mb")
+            for op_def_snap in op_def_snaps
+        ] + [run.tags.get("launcher/memory_in_mb")]
+        memory_in_mb = max([int(mem)
+                           for mem in memory_in_mb_tags if mem is not None], default=None)
+        disk_in_mb_tags = [
+            op_def_snap.tags.get("launcher/disk_in_mb")
+            for op_def_snap in op_def_snaps
+        ] + [run.tags.get("launcher/disk_in_mb")]
+        disk_in_mb = max([int(disk) for disk in disk_in_mb_tags if disk is not None], default=None)
+
+        self._instance.report_engine_event(
+            message="Requesting CloudFoundry task resources",
+            dagster_run=run,
+            engine_event_data=EngineEventData({
+                "Task memory_in_mb": memory_in_mb if memory_in_mb if not None else 'default',
+                "Task disk_in_mb": disk_in_mb if disk_in_mb if not None else 'default',
+            }),
+            cls=self.__class__,
+        )
 
         # Get app guid by its name
         app_guid = self.make_api_request(
@@ -152,6 +174,16 @@ class CFLauncher(RunLauncher[T_DagsterInstance], ConfigurableClass):
             path=f'v3/apps/{app_guid}/tasks',
             json={
                 "command": shlex.join(['./pipelines_platform/paas-wrapper.sh'] + command_args),
+                **(
+                    {
+                        "memory_in_mb": memory_in_mb
+                    } if memory_in_mb is not None else {}
+                ),
+                **(
+                    {
+                        "disk_in_mb": disk_in_mb
+                    } if disk_in_mb is not None else {}
+                ),
             }
         )
 
@@ -167,8 +199,10 @@ class CFLauncher(RunLauncher[T_DagsterInstance], ConfigurableClass):
             message="Launching run as CloudFoundry task",
             dagster_run=run,
             engine_event_data=EngineEventData({
-                "CF task GUID": task['guid'],
+                "CF task guid": task['guid'],
                 "CF task name": task['name'],
+                "CF task memory_in_mb": task['memory_in_mb'],
+                "CF task disk_in_mb": task['disk_in_mb'],
             }),
             cls=self.__class__,
         )
