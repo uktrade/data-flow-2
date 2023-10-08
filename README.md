@@ -1,5 +1,7 @@
 # data-flow-2
 
+[![Test suite](https://img.shields.io/github/actions/workflow/status/uktrade/data-flow-2/test.yml?label=Test%20suite)](https://github.com/uktrade/data-flow-2/actions/workflows/test.yml) [![Code coverage](https://img.shields.io/codecov/c/github/uktrade/data-flow-2?label=Code%20coverage)](https://app.codecov.io/gh/uktrade/data-flow-2)
+
 data-flow-2 is an instance of Dagster together with the code of pipelines that transfer and transform data.
 
 > This project is to evaluate Dagster in a non production environment
