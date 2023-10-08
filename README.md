@@ -29,6 +29,8 @@ To install production and development dependencies:
 pip install -r requirements-dev.txt
 ```
 
+### Linting
+
 To configure linting to run before committing:
 
 ```shell
@@ -40,6 +42,34 @@ To lint all files:
 ```shell
 pre-commit run --all-files
 ```
+
+### Tests
+
+To run tests you need a PostgreSQL database running - some of the tests assert on how the pipelines ingest into a real PostgreSQL database. This can either be done with `docker compose up --build` as above to run all of Dagster including a database. Otherwise run the following to start only the database component.
+
+```
+docker compose up --build -d db
+```
+
+To then run all the tests run:
+
+```shell
+pytest
+```
+
+To run all the tests in single file, for example `teams/deet/test_assets.py`, run:
+
+```shell
+pytest teams/deet/test_assets.py
+```
+
+To run a specific test in a file:
+
+```shell
+pytest teams/deet/test_assets.py::test_dynamic_asset_creation
+```
+
+See the [pytest documentation](https://docs.pytest.org/en/7.1.x/contents.html), or the [Dagster testing documentation](https://docs.dagster.io/concepts/testing) for more details.
 
 
 ## Deployment to staging
