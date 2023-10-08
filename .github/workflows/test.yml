@@ -9,23 +9,12 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        python-version:
-          - "3.11.0"
-        postgresql-version:
-          - "postgres:16beta2"
-        # sqlalchemy 1.4 doesn't support psycopg3
-        ci-extras:
-          - ci-psycopg2-sqlalchemy1
-          - ci-psycopg2-sqlalchemy2
-          - ci-psycopg3-sqlalchemy2
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v4"
       - uses: "actions/setup-python@v4"
         with:
-          python-version: '${{ matrix.python-version }}'
+          python-version: 3.11.0
       - name: "Run PostgreSQL"
         run: |
           cp sample.env .env
