@@ -18,7 +18,7 @@ docker compose up --build
 
 Then open http://localhost:8080 with your browser to see the Dagster interface.
 
-You can start writing assets in one of the directories in [teams/](./teams/). The assets are automatically loaded into the corresponding Dagster code location as you define them.
+You can start writing assets in one of the directories in [teams/](./teams/). For Dagster to notice changes, you may have to "reload" the corresponding "code location" at http://localhost:8080/locations.
 
 
 ## Local development environment
