@@ -48,6 +48,7 @@ pre-commit run --all-files
 To run tests you need a PostgreSQL database running - some of the tests assert on how the pipelines ingest into a real PostgreSQL database. This can either be done with `docker compose up --build` as above to run all of Dagster including a database. Otherwise run the following to start only the database component.
 
 ```
+cp sample.env .env
 docker compose up --build -d db
 ```
 
