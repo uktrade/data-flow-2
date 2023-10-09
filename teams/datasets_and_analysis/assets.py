@@ -25,7 +25,7 @@ def interactions() -> None:
     AssetCheckSpec(name="has_some_minor_issue", asset="report"),
 ])
 def report():
-    logger.info('Fetching interactions')
+    logger.info('Fetching report')
 
     yield Output(None, metadata={
         "num_rows": 35 + random.randrange(-10, 10),
