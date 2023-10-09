@@ -1,4 +1,4 @@
-from dagster import Definitions, asset, get_dagster_logger
+from dagster import Output, Definitions, AssetCheckResult, AssetCheckSpec, AssetCheckSeverity, asset, asset_check, get_dagster_logger
 
 logger = get_dagster_logger()
 
@@ -18,6 +18,25 @@ def interactions() -> None:
 @asset(deps=[
     "interactions",
     "dbt__commodity_codes",
+], check_specs=[
+    AssetCheckSpec(name="has_no_nulls", asset="report"),
+    AssetCheckSpec(name="has_some_minor_issue", asset="report"),
 ])
-def report() -> None:
+def report():
     logger.info('Fetching interactions')
+
+    yield Output(None, metadata={"num_rows": 35, "something_custom": "custom-data-value"})
+
+    yield AssetCheckResult(
+        check_name="has_no_nulls",
+        passed=True
+    )
+
+    yield AssetCheckResult(
+        check_name="has_some_minor_issue",
+        severity=AssetCheckSeverity.WARN,
+        passed=False,
+        metadata={
+            "number_of_rows_with_issue": int(10),
+        },
+    )
