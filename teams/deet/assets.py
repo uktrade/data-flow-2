@@ -55,15 +55,7 @@ def sync(
         )
 
 
-specs = [
-    {"schema": "dbt", "table_name": "commodity_codes"},
-    {"schema": "dbt", "table_name": "commodity_codes2"},
-]
-
-
-def build_asset(spec) -> AssetsDefinition:
-    schema = spec["schema"]
-    table_name = spec["table_name"]
+def build_asset(schema, table_name) -> AssetsDefinition:
 
     @asset(
         name=f"{schema}__{table_name}".format(),
@@ -73,8 +65,10 @@ def build_asset(spec) -> AssetsDefinition:
             delay=60,
         ))
     def _asset():
-        sync(table_name=spec["table_name"], schema=spec["schema"])
+        sync(schema=schema, table_name=table_name)
+
     return _asset
 
 
-assets = [build_asset(spec) for spec in specs]
+dbt__commodity_codes = build_asset(schema="dbt", table_name="commodity_codes")
+dbt__commodity_codes2 = build_asset(schema="dbt", table_name="commodity_codes2")
