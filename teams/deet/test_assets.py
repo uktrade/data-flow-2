@@ -1,9 +1,8 @@
-import pytest
-from unittest import mock
 import os
-import sqlalchemy as sa
+from unittest import mock
 
 from dagster import load_assets_from_modules
+import sqlalchemy as sa
 import pytest
 
 from . import assets
