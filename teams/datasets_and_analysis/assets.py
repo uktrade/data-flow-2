@@ -1,3 +1,5 @@
+import random
+
 from dagster import Output, Definitions, AssetCheckResult, AssetCheckSpec, AssetCheckSeverity, asset, asset_check, get_dagster_logger
 
 logger = get_dagster_logger()
@@ -25,7 +27,11 @@ def interactions() -> None:
 def report():
     logger.info('Fetching interactions')
 
-    yield Output(None, metadata={"num_rows": 35, "something_custom": "custom-data-value"})
+    yield Output(None, metadata={
+        "num_rows": 35 + random.randrange(-10, 10),
+        "maximum_widgets_per_foo": 10 + random.randrange(-10, 10),
+        "something_custom": "custom-data-value",
+    })
 
     yield AssetCheckResult(
         check_name="has_no_nulls",
