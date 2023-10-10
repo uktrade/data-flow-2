@@ -12,7 +12,27 @@ logger = get_dagster_logger()
 ], op_tags={
     'launcher/memory_in_mb': 10000,
     'launcher/disk_in_mb': 500,
-})
+}, description='''
+Initial description of the asset. Markdown is supported
+
+---
+
+With multiple lines **bold**, ~strike~, [link](https://www.github.com/)_
+
+### Header
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tincidunt nec arcu eget sodales.
+
+- List item
+- Second list item
+
+---
+
+### Another header
+
+ Nunc vitae maximus elit, et feugiat nulla. Etiam posuere nibh sapien, vitae cursus mi gravida non. Duis rhoncus at orci et luctus. Nam nibh nisi, commodo ac rutrum id, pellentesque quis tortor. Vivamus ipsum lorem, porttitor quis nunc quis, venenatis egestas ligula. Aenean rutrum magna ut luctus finibus. Fusce suscipit mattis tempus. Aenean ullamcorper ipsum et augue lobortis, ut fermentum velit interdum.
+
+''')
 def interactions() -> None:
     logger.info('Fetching interactions')
 
