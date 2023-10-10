@@ -9,7 +9,7 @@ logger = get_dagster_logger()
     ),
     freshness_policy=FreshnessPolicy(
         maximum_lag_minutes=2,
-        cron_schedule='5/1 * * * *',
+        cron_schedule='0 * * * *',
         cron_schedule_timezone='Europe/London',
     ),
 )
