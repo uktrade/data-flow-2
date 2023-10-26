@@ -17,10 +17,6 @@ anyio==4.0.0
     #   -r requirements.txt
     #   starlette
     #   watchfiles
-async-timeout==4.0.3
-    # via
-    #   -r requirements.txt
-    #   redis
 backoff==2.2.1
     # via
     #   -r requirements.txt
@@ -101,6 +97,10 @@ graphql-relay==3.2.0
     # via
     #   -r requirements.txt
     #   graphene
+greenlet==3.0.1
+    # via
+    #   -r requirements.txt
+    #   sqlalchemy
 grpcio==1.59.0
     # via
     #   -r requirements.txt
@@ -282,7 +282,7 @@ universal-pathlib==0.1.3
     # via
     #   -r requirements.txt
     #   dagster
-urllib3==1.26.17
+urllib3==1.26.18
     # via
     #   -r requirements.txt
     #   gql
